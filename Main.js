@@ -200,6 +200,22 @@ class Zao {
     const altPath   = path.join(__dirname, 'alt.json');
     const statePath = path.join(__dirname, 'ZAO-STATE.json');
     try {
+      // Check if ZAO-STATE.json already has valid cookies — if so, skip restore
+      if (fs.existsSync(statePath)) {
+        try {
+          const stateData   = fs.readFileSync(statePath, 'utf-8');
+          const stateParsed = JSON.parse(stateData);
+          if (Array.isArray(stateParsed) && stateParsed.length > 0) {
+            logger.log([
+              { message: "[ PROTECT ]: ", color: ["yellow", "cyan"] },
+              { message: `ZAO-STATE.json has ${stateParsed.length} cookies — skipping alt.json restore.`, color: "white" },
+            ]);
+            return;
+          }
+        } catch (_) {}
+      }
+
+      // ZAO-STATE.json is missing or invalid — restore from alt.json
       if (fs.existsSync(altPath)) {
         const altData = fs.readFileSync(altPath, 'utf-8');
         const parsed  = JSON.parse(altData);

@@ -1,38 +1,62 @@
 [
   {
-    "key": "datr",
-    "value": "Bpc4afr9HZTpcyv7PrmB-jQ5",
+    "key": "sb",
+    "value": "KvAxaeQG-sp1euKMs4IrJyNe",
     "domain": "facebook.com",
     "path": "/",
     "hostOnly": false,
-    "creation": "2026-03-31T17:19:17.031Z",
-    "lastAccessed": "2026-03-31T17:19:21.282Z",
+    "creation": "2026-04-01T11:59:45.512Z",
+    "lastAccessed": "2026-04-01T11:59:47.895Z",
     "secure": false,
     "httpOnly": false,
-    "expires": "2027-03-31T17:19:20.000Z"
+    "expires": "Infinity"
   },
   {
-    "key": "sb",
-    "value": "Bpc4acLYPk2JSqSVqaJQzbl_",
+    "key": "datr",
+    "value": "h8ePaVsRdz7bXryd_PWeH_QW",
     "domain": "facebook.com",
     "path": "/",
     "hostOnly": false,
-    "creation": "2026-03-31T17:19:17.037Z",
-    "lastAccessed": "2026-03-31T17:19:21.282Z",
+    "creation": "2026-04-01T11:59:45.520Z",
+    "lastAccessed": "2026-04-01T11:59:47.895Z",
     "secure": false,
     "httpOnly": false,
-    "expires": "2027-03-31T17:19:20.000Z"
+    "expires": "Infinity"
+  },
+  {
+    "key": "c_user",
+    "value": "61577450226238",
+    "domain": "facebook.com",
+    "path": "/",
+    "hostOnly": false,
+    "creation": "2026-04-01T11:59:45.521Z",
+    "lastAccessed": "2026-04-01T11:59:47.895Z",
+    "secure": false,
+    "httpOnly": false,
+    "expires": "Infinity"
   },
   {
     "key": "fr",
-    "value": "1rNZv4juw09Q5UUIx.AWcbSh8pvCDxVvoZzOlPsa_UznFXYn_ZfTBebxOerUP5dm5Lh-c.BpyrQE..AAA.0.0.BpzAIY.AWfqjWcofT5TV1zj42Vovp3QbPc",
+    "value": "1mFE9e4Bdq5EFeUsu.AWfm71HotyVhfMRHWzq8FEvDjR-nnBVlEDFjaaJ9y9B7_MXwENY.BpzQcy..AAA.0.0.BpzQix.AWeI6TWrNZg-9kwz8WTi2qh151g",
     "domain": "facebook.com",
     "path": "/",
     "hostOnly": false,
-    "creation": "2026-03-31T17:19:17.038Z",
-    "lastAccessed": "2026-03-31T17:19:21.282Z",
+    "creation": "2026-04-01T11:59:45.522Z",
+    "lastAccessed": "2026-04-01T11:59:47.895Z",
     "secure": true,
     "httpOnly": true,
-    "expires": "2026-06-29T17:19:20.000Z"
+    "expires": "2026-06-30T11:59:45.000Z"
+  },
+  {
+    "key": "xs",
+    "value": "15%3AImPk0wZjqwcjVw%3A2%3A1775044396%3A-1%3A-1%3A%3AAczcyKCi59iPaALuyJk2ManKZR4uLKrYXRAOMlXqTQ",
+    "domain": "facebook.com",
+    "path": "/",
+    "hostOnly": false,
+    "creation": "2026-04-01T11:59:45.522Z",
+    "lastAccessed": "2026-04-01T11:59:47.895Z",
+    "secure": false,
+    "httpOnly": false,
+    "expires": "Infinity"
   }
 ]

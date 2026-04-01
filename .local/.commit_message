@@ -1,0 +1,19 @@
+Fix side code bugs in ZAO bot (Task #2)
+
+Three code issues fixed:
+
+1. SCRIPTS/ZAO-CMDS/نكرار.js: Removed stray unquoted Arabic text and
+   markdown formatting (lines 81-87) at the end of the file that caused
+   a syntax error preventing the "تكرار" command module from loading.
+
+2. SCRIPTS/ZAO-CMDS/motor2.js + ZAO-SETTINGS.json + ZAO.js: Added BOTID
+   config field to ZAO-SETTINGS.json. Updated motor2.js to use fallback
+   `(global.config?.BOTID || global.botUserID)` for bot message detection.
+   Set `global.botUserID` in ZAO.js after login via `_api.getCurrentUserID()`.
+
+3. ZAO.js GBAN check: Moved the ban-list check from a non-blocking
+   top-level async IIFE into the `onBot()` async function, where it now
+   runs with `await` before login and command loading. Added try-catch
+   with a 10-second timeout so network failures log a warning and allow
+   startup to continue, while a positive ban result calls process.exit(0)
+   before any commands are loaded.

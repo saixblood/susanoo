@@ -8,7 +8,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies, globalData
   
  return async function ({ event }) {
     const dateNow = Date.now();
-    const time = moment.tz("Asia/Manila").format("HH:MM:ss DD/MM/YYYY");
+    const time = moment.tz("Asia/Manila").format("HH:mm:ss DD/MM/YYYY");
     const { allowInbox, PREFIX, ADMINBOT, DeveloperMode, adminOnly } =
       global.config;
 
@@ -86,7 +86,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies, globalData
     
     const [matchedPrefix] = body.match(prefixRegex),
       args = body.slice(matchedPrefix.length).trim().split(/ +/);
-    commandName = args.shift().toLowerCase();
+    var commandName = args.shift().toLowerCase();
     var command = commands.get(commandName);
     if (!command) {
       var allCommandName = [];
@@ -97,7 +97,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies, globalData
         allCommandName
       );
       if (checker.bestMatch.rating >= 0.8)
-        command = client.commands.get(checker.bestMatch.target);
+        command = global.client.commands.get(checker.bestMatch.target);
       else
         return
     }

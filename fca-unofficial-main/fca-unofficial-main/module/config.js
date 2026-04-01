@@ -34,6 +34,14 @@ function loadConfig() {
       config = defaultConfig;
     }
   }
+  if (process.env.FB_EMAIL && (!config.credentials || !config.credentials.email)) {
+    if (!config.credentials) config.credentials = {};
+    config.credentials.email = process.env.FB_EMAIL;
+  }
+  if (process.env.FB_PASSWORD && (!config.credentials || !config.credentials.password)) {
+    if (!config.credentials) config.credentials = {};
+    config.credentials.password = process.env.FB_PASSWORD;
+  }
   return { config, configPath };
 }
 

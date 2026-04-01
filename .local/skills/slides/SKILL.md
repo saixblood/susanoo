@@ -5,6 +5,8 @@ description: Instructions for building and editing slide deck artifacts in the R
 
 # Slides -- Presentation Decks in Code
 
+
+
 <context>
 A slides artifact is a React + Tailwind CSS application that functions as a slide deck. Each slide is a separate React component file in `src/pages/slides/`, rendered at a unique `/slideN` URL route (e.g., `/slide1`, `/slide2`). This React app runs inside a workspace app preview, where the preview wraps it in a custom slide viewer / editor UI. That UI provides a thumbnail sidebar for navigation, PPTX export, and visual editing controls that let the user reorder slides, add or delete slides, and edit visual properties like colors and text directly from the Replit interface.
 

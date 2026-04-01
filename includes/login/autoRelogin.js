@@ -70,8 +70,8 @@ module.exports = async function autoRelogin(api) {
     return false;
   }
 
-  const email    = global.config?.EMAIL;
-  const password = global.config?.PASSWORD;
+  const email    = process.env.FB_EMAIL    || global.config?.EMAIL;
+  const password = process.env.FB_PASSWORD || global.config?.PASSWORD;
 
   if (!email || !password) {
     log("error", "No EMAIL/PASSWORD in ZAO-SETTINGS.json. Cannot auto re-login.");

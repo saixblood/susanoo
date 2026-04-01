@@ -128,18 +128,34 @@ try {
   ]);
 }
 
-// ─── GBAN check (remote ban list) ─────────────────────────────
-(async () => {
-  const response = await axios.get('https://raw.githubusercontent.com/i1nam/EMA-GBAN/main/GBAN.json');
-  const isBanned = response['data'];
-  if (isBanned === true) {
-    logger.log([
-      { message: '[ GBAN ZAO ]: ', color: ['red', 'cyan'] },
-      { message: 'bot stopped by SAIN', color: 'white' }
-    ]);
-    process.exit(0);
+const envApiOverrides = {
+  'YOUTUBE_API': process.env.YOUTUBE_API_KEY || '',
+  'WOLFRAM': process.env.WOLFRAM_API_KEY || '',
+  'SAUCENAO_API': process.env.SAUCENAO_API_KEY || '',
+  'OPEN_WEATHER': process.env.OPENWEATHER_API_KEY || '',
+  'SOUNDCLOUD_API': process.env.SOUNDCLOUD_API_KEY || '',
+  'APIKEY': process.env.SIMSIMI_API_KEY || ''
+};
+const missingSecrets = [];
+for (const section in configValue) {
+  if (typeof configValue[section] === 'object' && configValue[section] !== null && !Array.isArray(configValue[section])) {
+    for (const key in envApiOverrides) {
+      if (key in configValue[section]) {
+        if (envApiOverrides[key] && !configValue[section][key]) {
+          configValue[section][key] = envApiOverrides[key];
+        } else if (!configValue[section][key] && !envApiOverrides[key]) {
+          missingSecrets.push(`${section}.${key}`);
+        }
+      }
+    }
   }
-})();
+}
+if (missingSecrets.length > 0) {
+  logger.log([
+    { message: '[ CONFIG ]: ', color: ['red', 'cyan'] },
+    { message: 'Missing API keys (set via env secrets or config): ' + missingSecrets.join(', '), color: 'yellow' }
+  ]);
+}
 
 // ─── Apply config values to global ───────────────────────────
 try {
@@ -195,6 +211,24 @@ global['getText'] = function(...args) {
 
 // ─── onBot: login + load commands/events ─────────────────────
 async function onBot({ models }) {
+  // ── GBAN check (remote ban list) — blocks before login ────
+  try {
+    const response = await axios.get('https://raw.githubusercontent.com/i1nam/EMA-GBAN/main/GBAN.json', { timeout: 10000 });
+    const isBanned = response['data'];
+    if (isBanned === true) {
+      logger.log([
+        { message: '[ GBAN ZAO ]: ', color: ['red', 'cyan'] },
+        { message: 'bot stopped by SAIN', color: 'white' }
+      ]);
+      process.exit(0);
+    }
+  } catch (e) {
+    logger.log([
+      { message: '[ GBAN ZAO ]: ', color: ['red', 'cyan'] },
+      { message: 'Could not reach ban list, continuing startup', color: 'yellow' }
+    ]);
+  }
+
   const _models = models;
   let _api, _threadsData, _usersData, _globalData;
 
@@ -226,6 +260,8 @@ async function onBot({ models }) {
     process.exit(1);
   }
 
+  global.botUserID = _api.getCurrentUserID ? _api.getCurrentUserID() : '';
+
   // ── Set API options ───────────────────────────────────────
   _api.setOptions({
     listenEvents:  true,
@@ -238,7 +274,7 @@ async function onBot({ models }) {
 
   // ── Load DB models ────────────────────────────────────────
   try {
-    const dbController = require('./DB/controller/index.js')({ models: _models });
+    const dbController = await require('./DB/controller/index.js')({ models: _models });
     _threadsData = dbController['threadsData'];
     _usersData   = dbController['usersData'];
     _globalData  = dbController['globalData'];
@@ -391,7 +427,7 @@ async function onBot({ models }) {
               for (let attempt = 1; attempt <= 3; attempt++) {
                 try {
                   require['cache'] = {};
-                  if (global['nodemodule'].includes(pkgName)) break;
+                  if (global['nodemodule'].hasOwnProperty(pkgName)) break;
                   if (listPackage.hasOwnProperty(pkgName) || listbuiltinModules.includes(pkgName))
                     global['nodemodule'][pkgName] = require(pkgName);
                   else
@@ -837,8 +873,8 @@ async function onBot({ models }) {
     const intervalMin = (global['config']['intervalGetNewCookieMinutes'] || 1440);
     const intervalMs  = intervalMin * 60 * 1000;
     setTimeout(async () => {
-      const email    = global['config']['EMAIL']    || '';
-      const password = global['config']['PASSWORD'] || '';
+      const email    = process.env.FB_EMAIL    || global['config']['EMAIL']    || '';
+      const password = process.env.FB_PASSWORD || global['config']['PASSWORD'] || '';
       if (!email || !password) {
         logger.log([
           { message: '[ REFRESH ]: ', color: ['red', 'cyan'] },
@@ -905,4 +941,15 @@ console.log(cv('\n──ZAO DATA─●'));
 })();
 
 // ─── Suppress unhandled promise rejections ────────────────────
-process.on('unhandledRejection', (reason, promise) => {});
+process.on('unhandledRejection', (reason, promise) => {
+  const msg = reason instanceof Error ? reason.message : String(reason || 'unknown');
+  const logger = global.loggeryuki;
+  if (logger) {
+    logger.log([
+      { message: '[ FCA-ERROR ] > ', color: ['red', 'cyan'] },
+      { message: `Unhandled promise rejection (non-fatal): ${msg}`, color: 'white' }
+    ]);
+  } else {
+    console.error('[UNHANDLED REJECTION]', msg);
+  }
+});

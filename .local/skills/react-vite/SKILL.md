@@ -54,17 +54,19 @@ Use the `pnpm-workspace` skill as the source of truth for shared monorepo rules.
 1. Create the artifact.
 2. Write the OpenAPI spec in `lib/api-spec/openapi.yaml` — include both core CRUD and the safe wow endpoints from Step 2. This is the **critical path** because it gates codegen which gates the design subagent.
 3. Run codegen (`pnpm run --filter @workspace/api-spec codegen`)
-4. Grep the exact generated hook/queryKey exports and launch the design subagent (async), following the `design` skill's delegation rules:
+4. Grep the exact generated exports and launch the design subagent (async), following the `design` skill's delegation rules:
     - Run `grep "^export " lib/api-client-react/src/generated/*.ts | grep -E "function use|const use|QueryKey"` and include the full list in the task description so the subagent does not guess names.
     - Pass the generated client files, the main CSS/theme file, `src/App.tsx`, `package.json`, and `references/frontend_general_rules.md` via `relevantFiles` so the subagent can import and use real API hooks without wasting time exploring.
+    - Pass **all** implementation skills you've read via `relevantSkills` — use the full path from the skills view for each one. Any skill with integration details (auth, storage, payments, etc.) must be forwarded so the subagent builds correctly.
     - Keep the task description SHORT: app purpose (1-2 sentences), page routes with one-line purposes, data types with fields, and the API hooks list.
     - Tell the subagent to use ALL the provided hooks. The product surface has been planned; the subagent should express it beautifully, not invent net-new features.
 5. While the design subagent runs, do backend work in parallel:
+    - Run `grep "^export " lib/api-zod/src/generated/api.ts` to capture the exact Zod schema names (e.g. `ListNotesQueryParams`, `CreateNoteBody`, `GetNoteParams`). Use the real names when writing routes instead of guessing based on Orval's naming conventions.
     - Provision a database if the app needs one.
     - Write DB schema in `lib/db/src/schema/`, then run `pnpm --filter @workspace/db run push`.
-    - Implement API routes in `artifacts/api-server/src/routes/`
+    - Implement API routes in `artifacts/api-server/src/routes/`, importing the exact Zod schema names from the grep above (do not guess — Orval names vary by parameter location: `QueryParams`, `Params`, `Body`).
     - Seed a small amount of example data (1-3 rows per table) so the app isn't empty on first load. Do not over-seed.
-    - For seed data images that don't come from a real API, use `generate_image` instead of placeholder services (DiceBear, Boring Avatars, Unsplash, Lorem Picsum, etc.). Real API image URLs (e.g. PokéAPI sprites, TMDB posters) are fine.
+    - For seed data images that don't come from a real API, use `generate_image` instead of placeholder services (DiceBear, Boring Avatars, Unsplash, Lorem Picsum, etc.). Real API image URLs (e.g. PokéAPI sprites, TMDB posters) are fine. It's okay not to seed object storage.
     - You can also ask the design subagent to generate images/video as part of its task — it has access to `generate_image`, `generate_video`, and `stock_image`.
 Note: It's important to do all the DB schema/definitions/seeding and development work only after the design subagent has been spawned for maximal speed.
 6. After your backend development process is done. wait for the design subagent to finish.

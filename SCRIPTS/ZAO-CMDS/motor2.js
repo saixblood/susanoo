@@ -23,7 +23,7 @@ module.exports.handleEvent = async function ({ event }) {
   const { threadID, isGroup, senderID } = event;
   if (!isGroup) return;
   // تسجيل آخر نشاط في المجموعة
-  if (senderID !== global.config?.BOTID) {
+  if (senderID !== (global.config?.BOTID || global.botUserID)) {
     global.lastActivity[threadID] = Date.now();
   }
 };

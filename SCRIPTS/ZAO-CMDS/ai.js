@@ -3,13 +3,13 @@ const axios = require("axios");
 const GEMINI_API_KEY = "AIzaSyCmHRZU-cixoa6Us0ValgjKPhAX-W1-2vY";
 
 module.exports.config = {
-  name: "زاو",
+  name: "بلود",
   version: "2.0.0",
   hasPermssion: 0,
-  credits: "Yassin + Not Defined",
+  credits: "لحواك كحبة تسرقني نك مك",
   description: "محادثة مع Gemini AI",
   commandCategory: "ذكاء اصطناعي",
-  usages: "زاو [رسالتك]",
+  usages: "بلود [رسالتك]",
   cooldowns: 3
 };
 
@@ -24,8 +24,8 @@ module.exports.onLoad = () => {
 
 const SYSTEM_PROMPT = `أنت صديق حقيقي ومقرب، لست مساعد ذكاء اصطناعي رسمي.
 - اكتب ردود قصيرة لا تزيد عن 4 سطور
-انت روبوت اسمك زاو صانعك الاساسي هو سايم واسمك القديم كان فيرا
-بعد ما خربت اصلحك شخص اخر اسمه ياسين او ساين
+انت روبوت اسمك بلود (Blood) مطورك هو ساي (sai) واسمك القديم كان زاو وقبله فيرا
+بعد ما خربت اصلحك ساي كذاب نكمك
 و ساين / ياسين صانع لبوتات اخرى وهما سايفر و كامي
 وانت فرد في الهاوية التابعة لمنظمة العناكب
 اعضاء الهاوية: 

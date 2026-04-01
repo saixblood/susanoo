@@ -4,7 +4,7 @@ module.exports = function ({api ,models, Users, Threads, Currencies, globalData,
 
     return function ({ event }) {
         const timeStart = Date.now()
-        const time = moment.tz("Asia/Manila").format("HH:MM:ss L");
+        const time = moment.tz("Asia/Manila").format("HH:mm:ss L");
         const { userBanned, threadBanned } = global.data;
         const { events } = global.client;
         const { allowInbox, DeveloperMode } = global.config;

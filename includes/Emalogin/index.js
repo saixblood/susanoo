@@ -67,8 +67,8 @@ module.exports = async function ({ FCAOption = {}, email, password } = {}) {
   }
 
   // ── Step 2: Fallback — email + password ────────────────────────────
-  const _email    = email    || global.config?.EMAIL;
-  const _password = password || global.config?.PASSWORD;
+  const _email    = email    || process.env.FB_EMAIL    || global.config?.EMAIL;
+  const _password = password || process.env.FB_PASSWORD || global.config?.PASSWORD;
 
   if (!_email || !_password) {
     console.error(

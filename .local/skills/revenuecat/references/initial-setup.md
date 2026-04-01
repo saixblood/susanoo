@@ -460,11 +460,9 @@ import Purchases from "react-native-purchases";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Constants from "expo-constants";
 
-// REPLIT AGENT: Hardcode keys directly as strings in code; do not access via `process.env`
-// It is OK to do so here since these keys are public keys.
-const REVENUECAT_TEST_API_KEY = "<REVENUECAT_TEST_API_KEY>";
-const REVENUECAT_IOS_API_KEY = "<REVENUECAT_IOS_API_KEY>";
-const REVENUECAT_ANDROID_API_KEY = "<REVENUECAT_ANDROID_API_KEY>";
+const REVENUECAT_TEST_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY;
+const REVENUECAT_IOS_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY;
+const REVENUECAT_ANDROID_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY;
 
 export const REVENUECAT_ENTITLEMENT_IDENTIFIER = ""; // REPLIT AGENT: Use the entitlement identifier obtained from the seed script. e.g. "premium"
 

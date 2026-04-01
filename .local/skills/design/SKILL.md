@@ -17,7 +17,8 @@ You MUST include `specialization: "DESIGN"`. Without it, a general subagent is c
 await startAsyncSubagent({
     task: "...",
     specialization: "DESIGN",
-    relevantFiles: [...]
+    relevantFiles: [...],
+    relevantSkills: [".local/skills/clerk-auth/SKILL.md", ".local/skills/object-storage/SKILL.md"]  // ALL implementation skills you read — use paths from the skills view
 });
 ```
 ## Task Modes
@@ -175,14 +176,16 @@ Always tell the subagent to invest in micro-interactions and transitions — the
 
 Nobody likes boring auth screens, logout pages, or onboarding flows. Tell the subagent explicitly: supporting screens (login, register, forgot password, settings, error pages, empty states) deserve the same creative energy as the main app. A beautifully designed dashboard with a generic white login page tells the user the polish is superficial. These screens set and close the experience — make them memorable.
 
-## What to Pass via relevantFiles
+## What to Pass via relevantFiles and relevantSkills
 
-For fullstack apps, always pass:
+For fullstack apps, always pass via `relevantFiles`:
 - Generated client files (workspace root: `lib/api-client-react/src/generated/api.ts`, `lib/api-client-react/src/generated/api.schemas.ts`)
 - Main CSS/theme file (`artifacts/<slug>/src/index.css`)
 - Scaffold entry point (`artifacts/<slug>/src/App.tsx`) — so the subagent knows the existing router setup and doesn't guess
 - Artifact's `package.json` (`artifacts/<slug>/package.json`) — so the subagent knows available dependencies
 - Shared frontend conventions (`.local/skills/react-vite/references/frontend_general_rules.md`)
+
+Pass **all** implementation skills you've read via `relevantSkills` — every skill with integration details (auth, storage, payments, etc.) must be included so the subagent builds correctly. Use the full path from the skills view for each one. Do NOT pass orchestration skills that are instructions for you (design, delegation, react-vite, pnpm-workspace). Do not regurgitate skill contents in the task description.
 
 For mockups, pass:
 - The mockup folder's `_shared/` files (if multi-page with shared layout)
