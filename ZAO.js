@@ -1146,60 +1146,11 @@ async function onBot({ models }) {
     }, CHECK_INTERVAL);
   }());
 
-  // ─── 7. MQTT silence watchdog — restart listener after 20 min idle ─
-  // Catches silent MQTT drops where no error event fires.
-  // استخدام global['lastMqttActivity'] وليس متغير محلي لتجنب ReferenceError
-  let _mqttRestartAttempts = 0;
-  const _MQTT_MAX_RESTARTS  = 5;
-
-  setInterval(() => {
-    const SILENCE_LIMIT = 20 * 60 * 1000;
-    const silentFor     = Date.now() - (global['lastMqttActivity'] || Date.now());
-    if (silentFor > SILENCE_LIMIT) {
-      if (_mqttRestartAttempts >= _MQTT_MAX_RESTARTS) {
-        logger.log([
-          { message: '[ MQTT-SILENCE ]: ', color: ['red', 'cyan'] },
-          { message: `Reached max MQTT restart attempts (${_MQTT_MAX_RESTARTS}). Bot stays alive — watchdog will recover if needed.`, color: 'white' }
-        ]);
-        global['lastMqttActivity'] = Date.now();
-        _mqttRestartAttempts = 0;
-        return;
-      }
-      _mqttRestartAttempts++;
-      logger.log([
-        { message: '[ MQTT-SILENCE ]: ', color: ['red', 'cyan'] },
-        { message: `No MQTT activity for ${Math.round(silentFor / 60000)} min — restarting listener (attempt ${_mqttRestartAttempts}/${_MQTT_MAX_RESTARTS}).`, color: 'white' }
-      ]);
-      try {
-        if (global['handleListen']) {
-          try { global['handleListen'].stopListening(); } catch (_) {}
-        }
-        setTimeout(() => {
-          try {
-            global['handleListen']     = _api['listenMqtt'](messageHandler);
-            global['lastMqttActivity'] = Date.now();
-            _mqttRestartAttempts       = 0;
-            logger.log([
-              { message: '[ MQTT-SILENCE ]: ', color: ['red', 'cyan'] },
-              { message: 'Listener restarted successfully. Bot stays alive.', color: 'white' }
-            ]);
-          } catch (e2) {
-            logger.log([
-              { message: '[ MQTT-SILENCE ]: ', color: ['red', 'cyan'] },
-              { message: `Listener restart failed: ${e2.message}. Will retry on next check.`, color: 'white' }
-            ]);
-          }
-        }, 1500);
-      } catch (e) {
-        logger.log([
-          { message: '[ MQTT-SILENCE ]: ', color: ['red', 'cyan'] },
-          { message: `Restart setup failed: ${e.message}. Will retry on next check.`, color: 'white' }
-        ]);
-      }
-    } else {
-      if (_mqttRestartAttempts > 0) _mqttRestartAttempts = 0;
-    }
-  }, 5 * 60 * 1000);
+  // ─── 7. MQTT silence watchdog ──────────────────────────────
+  // Handled by includes/mqttHealthCheck.js (started above at step 6).
+  // That module uses global['_restartListener'] which is defined at line ~907.
+  // Duplicate inline watchdog removed to prevent two simultaneous listenMqtt
+  // calls that caused the bot to process every message twice.
 
   // ─── 8. Memory guard — clean exit if heap exceeds 512 MB ──────
   // Saves cookies first so the watchdog restarts with fresh state.
