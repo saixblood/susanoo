@@ -2,10 +2,10 @@ module.exports.config = {
   name: "اوامر",
   version: "1.0.0",
   hasPermssion: 0,
-  credits: "نوت دفاين",
-  description: "عرض قائمة الأوامر",
-  commandCategory: "النظام",
-  usages: "",
+  credits: "ZAO Team",
+  description: "عرض قائمة الأوامر المتاحة",
+  commandCategory: "معلومات",
+  usages: "اوامر",
   cooldowns: 3
 };
 
@@ -14,26 +14,32 @@ module.exports.languages = {
   "en": {}
 };
 
+module.exports.onLoad = () => {};
+
 module.exports.run = async function ({ api, event }) {
   const { threadID, messageID } = event;
-  const { commands } = global.client;
+  const fs = require("fs");
+  const path = require("path");
 
-  let list = "📋 قائمة الأوامر:\n\n";
-  const categories = {};
+  const cmdsPath = __dirname;
+  const files = fs.readdirSync(cmdsPath).filter(f => f.endsWith(".js"));
 
-  for (const [name, cmd] of commands) {
-    const cat = cmd.config.commandCategory || "عام";
-    if (!categories[cat]) categories[cat] = [];
-    categories[cat].push(name);
+  const names = [];
+  for (const f of files) {
+    try {
+      const cmd = require(path.join(cmdsPath, f));
+      if (cmd.config?.name) names.push(cmd.config.name);
+    } catch {}
   }
 
-  for (const [cat, cmds] of Object.entries(categories)) {
-    list += `[ ${cat} ]\n`;
-    list += cmds.map(c => `• ${c}`).join("\n");
-    list += "\n\n";
-  }
+  const now = new Date();
+  const time = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
 
-  list += `📦 المجموع: ${commands.size} أمر`;
+  const cmdList = names.map(n => `❈ - ${n}`).join("\n");
 
-  api.sendMessage(list, threadID, messageID);
+  const msg =
+    `﹟Ꮓ'ɑ︩︪𝗈 🪙⃞⃪̸̷̶↴٫ - 𝟏͟𝟐:͟𝟑͟𝟎 ⋆៸៸ ⨾𝐋'ı⃟̸̷⃪̶𝗌ȶ  ˖\n` +
+    `${cmdList}`;
+
+  return api.sendMessage(msg, threadID, messageID);
 };
